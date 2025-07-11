@@ -15,6 +15,20 @@ It creates sensors for
 
 It will also create a camera entity for the speed test snapshot image  
 
+# Installation  
+The easiest way to install is with a container and docker-compose:  
+```
+version: "3.8"
+
+services:
+  speedtest-mqtt:
+    image: ghcr.io/sefininio/speedtest-mqtt:latest
+    container_name: speedtest-mqtt
+    restart: unless-stopped
+    env_file: .env
+    network_mode: host  
+```
+
 
 # .env file:
 ### MQTT connection  
@@ -22,7 +36,7 @@ It will also create a camera entity for the speed test snapshot image
 MQTT_BROKER_HOST    
 
 > The MQTT host port   
-MQTT_BROKER_PORT    
+MQTT_BROKER_PORT=1883    
 
 > The MQTT username  (optional)   
 MQTT_USERNAME       

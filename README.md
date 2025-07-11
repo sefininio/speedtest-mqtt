@@ -1,7 +1,6 @@
 # speedtest-mqtt
 
 A service that wraps a python script for running Ookla Speedtest CLI and report results to MQTT with Home Assistant auto discovery.  
-It will run the speedtest every 3 hours by default, cron can be defined in env (see below).  
 
 It creates sensors for   
 * Ping (ms)  
@@ -44,9 +43,6 @@ MQTT_USERNAME
 
 > The MQTT password  (optional)  
 MQTT_PASSWORD       
-
-> The cron schedule for running the speedtest, defaults to every 3h.
-CRON_SCHEDULE="${CRON_SCHEDULE:-0 */3 * * *}"  
 
 ### Entity naming and discovery
 

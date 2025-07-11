@@ -1,5 +1,7 @@
 #!/bin/sh
 
+CRON_SCHEDULE="${CRON_SCHEDULE:-0 */3 * * *}"  # every 3 hours by default
+
 if [ "$TEST_MODE" = "1" ]; then
     echo "🧪 Running in test mode..."
     python3 /app/speedtest_to_mqtt_ha.py

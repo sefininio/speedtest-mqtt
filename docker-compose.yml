@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  speedtest-mqtt:
+    build: .
+    container_name: speedtest-mqtt
+    restart: unless-stopped
+    env_file: .env
+    network_mode: host

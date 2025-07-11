@@ -103,7 +103,7 @@ def publish_values(client, summary):
             client.publish(f"{SENSOR_PREFIX}/{key}", value, retain=True)
 
 def connect_mqtt():
-    client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=CallbackAPIVersion.V4)
+    client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=CallbackAPIVersion.VERSION2)
     if MQTT_USERNAME:
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
     client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)

@@ -46,7 +46,8 @@ def extract_summary(data):
         "isp": data["isp"],
         "server": data["server"]["name"],
         "result_url": data["result"]["url"],
-        "image_url": data["result"]["url"] + ".png"
+        "image_url": data["result"]["url"] + ".png",
+        "timestamp": data["timestamp"],
     }
 
 def publish_discovery(client, sensor_id, name, unit, icon, value_template):
@@ -118,6 +119,10 @@ def run_once():
         publish_discovery(client, "download_mbps", "Download", "Mbps", "mdi:download-network", "{{ value }}")
         publish_discovery(client, "upload_mbps", "Upload", "Mbps", "mdi:upload-network", "{{ value }}")
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
+        publish_discovery(client, "external_ip", "External IP", None, "mdi:ip-network", "{{ value }}")
+        publish_discovery(client, "isp", "ISP", None, "mdi:access-point-network", "{{ value }}")
+        publish_discovery(client, "server", "Speedtest Server", None, "mdi:server", "{{ value }}")        
+        publish_discovery(client, "timestamp", "Speedtest Timestamp", None, "mdi:clock", "{{ value }}")
         publish_camera_discovery(client)
         publish_camera_image(client, summary["image_url"])
         publish_values(client, summary)

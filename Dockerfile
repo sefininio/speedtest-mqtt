@@ -1,15 +1,26 @@
-FROM alpine:latest
+FROM debian:bullseye-slim
 
-# ✅ Replace with appropriate architecture URL if needed
-ENV SPEEDTEST_URL=https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz
+# Speedtest repository installer
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apk add --no-cache python3 py3-pip curl tar \
- && pip install --no-cache-dir paho-mqtt \
- && curl -Lo speedtest.tgz $SPEEDTEST_URL \
- && tar -xzf speedtest.tgz -C /usr/local/bin --strip-components=1 \
- && chmod +x /usr/local/bin/speedtest \
- && rm speedtest.tgz
+# Install system and Python dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    ca-certificates \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
+# Install Speedtest CLI from Ookla repo
+RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash \
+ && apt-get update && apt-get install -y speedtest \
+ && speedtest --accept-license --accept-gdpr > /dev/null
+
+# Install Python dependencies
+RUN pip3 install --no-cache-dir paho-mqtt requests
+
+# Copy your script
 COPY speedtest_to_mqtt_ha.py /app/
 WORKDIR /app
 

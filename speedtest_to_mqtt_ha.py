@@ -4,6 +4,7 @@ import json
 import paho.mqtt.client as mqtt
 import os
 import time
+import requests
 
 # Config from environment (with defaults)
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
@@ -27,7 +28,12 @@ def run_speedtest():
         result = subprocess.run(["speedtest", "--format=json"], capture_output=True, text=True, check=True)
         return json.loads(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Speedtest error:", e)
+        print("❌ Speedtest failed!")
+        print(f"Exit code: {e.returncode}")
+        print("STDOUT:")
+        print(e.stdout.strip())
+        print("STDERR:")
+        print(e.stderr.strip())
         return None
 
 def extract_summary(data):
@@ -70,16 +76,25 @@ def publish_camera_discovery(client, image_url):
     payload = {
         "name": "Speedtest Result Image",
         "unique_id": f"{DEVICE_NAME}_camera",
+        "topic": f"{SENSOR_PREFIX}/image",
         "device": {
             "identifiers": [DEVICE_NAME],
             "name": DEVICE_NAME.replace("_", " ").title(),
             "manufacturer": DEVICE_MANUFACTURER,
             "model": DEVICE_MODEL
         },
-        "topic": f"{SENSOR_PREFIX}/image_url"
+        "image_url": image_url
     }
     client.publish(topic, json.dumps(payload), retain=True)
-    client.publish(f"{SENSOR_PREFIX}/image_url", image_url, retain=True)
+
+def publish_camera_image(client, image_url):
+    try:
+        response = requests.get(image_url)
+        response.raise_for_status()
+        image_data = response.content
+        client.publish(f"{SENSOR_PREFIX}/image", image_data, retain=False)
+    except Exception as e:
+        print(f"Failed to download or publish image: {e}")
 
 def publish_values(client, summary):
     for key, value in summary.items():
@@ -87,7 +102,7 @@ def publish_values(client, summary):
             client.publish(f"{SENSOR_PREFIX}/{key}", value, retain=True)
 
 def connect_mqtt():
-    client = mqtt.Client()
+    client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=4)
     if MQTT_USERNAME:
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
     client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
@@ -106,14 +121,15 @@ def run_once():
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
         publish_values(client, summary)
         if "image_url" in summary:
-            publish_camera_discovery(client, summary["image_url"])
+            publish_camera_discovery(client)
+            publish_camera_image(client, image_url)            
         client.loop_stop()
         client.disconnect()
 
 def run_loop():
     while True:
         run_once()
-        time.sleep(INTERVAL)
+        time.sleep(SAMPLE_INTERVAL)
 
 if __name__ == "__main__":
     test_mode = os.getenv("TEST_MODE", "0") == "1"
@@ -121,3 +137,4 @@ if __name__ == "__main__":
         run_once()
     else:
         run_loop()
+        

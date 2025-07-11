@@ -93,7 +93,8 @@ def publish_camera_image(client, image_url):
         response = requests.get(image_url)
         response.raise_for_status()
         image_data = response.content
-        client.publish(f"{SENSOR_PREFIX}/image", image_data, retain=False)
+        encoded_image = base64.b64encode(image_data).decode("utf-8")
+        client.publish(f"{SENSOR_PREFIX}/image", encoded_image, retain=False)
     except Exception as e:
         print(f"Failed to download or publish image: {e}")
 

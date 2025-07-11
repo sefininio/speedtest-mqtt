@@ -4,6 +4,7 @@ import json
 import paho.mqtt.client as mqtt
 import os
 import time
+import requests
 from paho.mqtt.client import CallbackAPIVersion
 
 # Config from environment (with defaults)

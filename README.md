@@ -65,3 +65,6 @@ DEVICE_MANUFACTURER="Ookla + MQTT"
 > HA Device model  
 DEVICE_MODEL=Speedtest CLI  
 
+> Timezone override  
+TZ=Asia/Jerusalem  
+

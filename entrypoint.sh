@@ -7,7 +7,7 @@ if [ "$TEST_MODE" = "1" ]; then
     python3 /app/speedtest_to_mqtt_ha.py
 else
     echo "⏱️ Setting up cron schedule: $CRON_SCHEDULE"
-    echo "$CRON_SCHEDULE root python3 /app/speedtest_to_mqtt_ha.py >> /var/log/cron.log 2>&1" > /etc/cron.d/speedtest
+    echo "$CRON_SCHEDULE python3 /app/speedtest_to_mqtt_ha.py >> /var/log/cron.log 2>&1" > /etc/cron.d/speedtest
     chmod 0644 /etc/cron.d/speedtest
     crontab /etc/cron.d/speedtest
 

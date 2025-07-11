@@ -4,8 +4,6 @@ import json
 import paho.mqtt.client as mqtt
 import os
 import time
-import requests
-import base64
 from paho.mqtt.client import CallbackAPIVersion
 
 # Config from environment (with defaults)
@@ -19,7 +17,6 @@ SENSOR_PREFIX = os.getenv("SENSOR_PREFIX", "home/internet/speedtest")
 DEVICE_MANUFACTURER = os.getenv("DEVICE_MANUFACTURER", "Ookla + MQTT")
 DEVICE_MODEL = os.getenv("DEVICE_MODEL", "Speedtest CLI")
 DEVICE_NAME = os.getenv("DEVICE_NAME", "speedtest_sensor")
-
 
 def bytes_to_mbps(bytes_per_sec):
     return round((bytes_per_sec * 8) / 1_000_000, 2)
@@ -72,31 +69,6 @@ def publish_discovery(client, sensor_id, name, unit, icon, value_template):
     }
     client.publish(topic, json.dumps(payload), retain=True)
 
-def publish_camera_discovery(client):
-    topic = f"{DISCOVERY_PREFIX}/camera/{DEVICE_NAME}/result/config"
-    payload = {
-        "name": "Speedtest Result Image",
-        "unique_id": f"{DEVICE_NAME}_camera",
-        "topic": f"{SENSOR_PREFIX}/image",
-        "device": {
-            "identifiers": [DEVICE_NAME],
-            "name": DEVICE_NAME.replace("_", " ").title(),
-            "manufacturer": DEVICE_MANUFACTURER,
-            "model": DEVICE_MODEL
-        }
-    }
-    client.publish(topic, json.dumps(payload), retain=True)
-
-def publish_camera_image(client, image_url):
-    try:
-        response = requests.get(image_url)
-        response.raise_for_status()
-        image_data = response.content
-        encoded_image = base64.b64encode(image_data).decode("utf-8")
-        client.publish(f"{SENSOR_PREFIX}/image", encoded_image, retain=False)
-    except Exception as e:
-        print(f"Failed to download or publish image: {e}")
-
 def publish_values(client, summary):
     for key, value in summary.items():
         if isinstance(value, (int, float, str)):
@@ -120,10 +92,8 @@ def run_once():
         publish_discovery(client, "download_mbps", "Download", "Mbps", "mdi:download-network", "{{ value }}")
         publish_discovery(client, "upload_mbps", "Upload", "Mbps", "mdi:upload-network", "{{ value }}")
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
+        publish_discovery(client, "result_image_url", "Result Image URL", None, "mdi:image", "{{ value }}")
         publish_values(client, summary)
-        if "image_url" in summary:
-            publish_camera_discovery(client)
-            publish_camera_image(client, summary["image_url"])            
         client.loop_stop()
         client.disconnect()
 

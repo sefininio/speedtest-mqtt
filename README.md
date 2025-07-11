@@ -2,7 +2,7 @@
 
 A service that wraps a python script for running Ookla Speedtest CLI and report results to MQTT with Home Assistant auto discovery.  
 
-It creates sensors for   
+A Home Assistant device will be created with the following sensors:
 * Ping (ms)  
 * Jitter(ms)  
 * Download (Mbps)  
@@ -57,8 +57,8 @@ DISCOVERY_PREFIX=homeassistant
 > HA sensor name prefix  
 SENSOR_PREFIX=home/internet/speedtest  
 
-> HA Device name. Add postfix for the server name, this will allow multiple instances  
-> For example `speedtest_nas`  
+> HA Device name. Add postfix for the server name, this will allow multiple instances running speedtest and reporting to the same mqtt+ha instance  
+> For example `speedtest_nas` will create a `Speedtest Nas` Device.
 DEVICE_NAME=speedtest  
 
 > HA Device manufacturer  

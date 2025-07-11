@@ -20,7 +20,6 @@ DEVICE_MANUFACTURER = os.getenv("DEVICE_MANUFACTURER", "Ookla + MQTT")
 DEVICE_MODEL = os.getenv("DEVICE_MODEL", "Speedtest CLI")
 DEVICE_NAME = os.getenv("DEVICE_NAME", "speedtest_sensor")
 
-SAMPLE_INTERVAL = int(os.getenv("SAMPLE_INTERVAL_SECONDS", 10800))
 
 def bytes_to_mbps(bytes_per_sec):
     return round((bytes_per_sec * 8) / 1_000_000, 2)
@@ -128,14 +127,5 @@ def run_once():
         client.loop_stop()
         client.disconnect()
 
-def run_loop():
-    while True:
-        run_once()
-        time.sleep(SAMPLE_INTERVAL)
-
 if __name__ == "__main__":
-    test_mode = os.getenv("TEST_MODE", "0") == "1"
-    if test_mode:
-        run_once()
-    else:
-        run_loop()
+    run_once()

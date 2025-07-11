@@ -1,0 +1,1 @@
+0 */3 * * * /usr/local/bin/python /app/speedtest_to_mqtt_ha.py >> /var/log/cron.log 2>&1

@@ -1,27 +1,27 @@
-FROM debian:bullseye-slim
+FROM python:3.9-slim
 
-# Speedtest repository installer
-ENV DEBIAN_FRONTEND=noninteractive
+# Install required packages
+RUN apt-get update && \
+    apt-get install -y curl cron gnupg ca-certificates && \
+    apt-get clean
 
-# Install system and Python dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    ca-certificates \
-    python3 \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+# Install speedtest-cli from Ookla repo
+RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash && \
+    apt-get install -y speedtest
 
-# Install Speedtest CLI from Ookla repo
-RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash \
- && apt-get update && apt-get install -y speedtest \
- && speedtest --accept-license --accept-gdpr > /dev/null
+# Accept Ookla license and GDPR to prevent blocking
+RUN speedtest --accept-license --accept-gdpr > /dev/null || true
 
-# Install Python dependencies
-RUN pip3 install --no-cache-dir paho-mqtt requests
+# Install Python requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your script
-COPY speedtest_to_mqtt_ha.py /app/
+# Copy app files
+COPY speedtest_to_mqtt_ha.py /app/speedtest_to_mqtt_ha.py
+COPY crontab.txt /app/crontab.txt
+COPY entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh
 WORKDIR /app
 
-ENTRYPOINT ["python3", "/app/speedtest_to_mqtt_ha.py"]
+ENTRYPOINT ["/app/entrypoint.sh"]

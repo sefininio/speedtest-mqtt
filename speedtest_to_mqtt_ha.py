@@ -69,13 +69,12 @@ def publish_discovery(client, sensor_id, name, unit, icon, value_template):
     }
     client.publish(topic, json.dumps(payload), retain=True)
 
-def publish_camera_discovery(client, image_url):
+def publish_camera_discovery(client):
     topic = f"{DISCOVERY_PREFIX}/camera/{DEVICE_NAME}/result/config"
     payload = {
         "name": "Speedtest Result Image",
         "unique_id": f"{DEVICE_NAME}_camera",
         "topic": f"{SENSOR_PREFIX}/image",  # not used here, but needed
-        "image_url": image_url,
         "device": {
             "identifiers": [DEVICE_NAME],
             "name": DEVICE_NAME.replace("_", " ").title(),
@@ -85,6 +84,15 @@ def publish_camera_discovery(client, image_url):
     }
     client.publish(topic, json.dumps(payload), retain=True)    
 
+def publish_camera_image(client, image_url):
+    try:
+        response = requests.get(image_url)
+        response.raise_for_status()
+        image_data = response.content  # binary data
+        client.publish(f"{SENSOR_PREFIX}/image", image_data, retain=False)
+    except Exception as e:
+        print(f"Failed to download or publish image: {e}")
+        
 def publish_values(client, summary):
     for key, value in summary.items():
         if isinstance(value, (int, float, str)):
@@ -109,8 +117,8 @@ def run_once():
         publish_discovery(client, "download_mbps", "Download", "Mbps", "mdi:download-network", "{{ value }}")
         publish_discovery(client, "upload_mbps", "Upload", "Mbps", "mdi:upload-network", "{{ value }}")
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
-        publish_camera_discovery(client, summary["image_url"])
-        client.publish(f"{SENSOR_PREFIX}/image", "image available", retain=False)
+        publish_camera_discovery(client)
+        publish_camera_image(client, summary["image_url"])
         publish_values(client, summary)
         client.loop_stop()
         client.disconnect()

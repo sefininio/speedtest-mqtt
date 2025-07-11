@@ -69,6 +69,22 @@ def publish_discovery(client, sensor_id, name, unit, icon, value_template):
     }
     client.publish(topic, json.dumps(payload), retain=True)
 
+def publish_camera_discovery(client, image_url):
+    topic = f"{DISCOVERY_PREFIX}/camera/{DEVICE_NAME}/result/config"
+    payload = {
+        "name": "Speedtest Result Image",
+        "unique_id": f"{DEVICE_NAME}_camera",
+        "topic": f"{SENSOR_PREFIX}/image",  # not used here, but needed
+        "image_url": image_url,
+        "device": {
+            "identifiers": [DEVICE_NAME],
+            "name": DEVICE_NAME.replace("_", " ").title(),
+            "manufacturer": DEVICE_MANUFACTURER,
+            "model": DEVICE_MODEL
+        }
+    }
+    client.publish(topic, json.dumps(payload), retain=True)    
+
 def publish_values(client, summary):
     for key, value in summary.items():
         if isinstance(value, (int, float, str)):
@@ -93,7 +109,8 @@ def run_once():
         publish_discovery(client, "download_mbps", "Download", "Mbps", "mdi:download-network", "{{ value }}")
         publish_discovery(client, "upload_mbps", "Upload", "Mbps", "mdi:upload-network", "{{ value }}")
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
-        publish_discovery(client, "image_url", "Result Image URL", None, "mdi:image", "{{ value }}")
+        publish_camera_discovery(client, summary["image_url"])
+        client.publish(f"{SENSOR_PREFIX}/image", "image available", retain=False)
         publish_values(client, summary)
         client.loop_stop()
         client.disconnect()

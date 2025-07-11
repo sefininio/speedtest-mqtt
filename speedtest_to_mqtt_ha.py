@@ -93,7 +93,7 @@ def run_once():
         publish_discovery(client, "download_mbps", "Download", "Mbps", "mdi:download-network", "{{ value }}")
         publish_discovery(client, "upload_mbps", "Upload", "Mbps", "mdi:upload-network", "{{ value }}")
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
-        publish_discovery(client, "result_image_url", "Result Image URL", None, "mdi:image", "{{ value }}")
+        publish_discovery(client, "image_url", "Result Image URL", None, "mdi:image", "{{ value }}")
         publish_values(client, summary)
         client.loop_stop()
         client.disconnect()

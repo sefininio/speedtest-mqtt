@@ -27,6 +27,8 @@ services:
     restart: unless-stopped
     env_file: .env
     network_mode: host  
+    environment:      
+      - TZ=Asia/Jerusalem    
 ```
 
 

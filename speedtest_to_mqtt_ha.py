@@ -5,6 +5,7 @@ import paho.mqtt.client as mqtt
 import os
 import time
 import requests
+from paho.mqtt.client import CallbackAPIVersion
 
 # Config from environment (with defaults)
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
@@ -102,7 +103,7 @@ def publish_values(client, summary):
             client.publish(f"{SENSOR_PREFIX}/{key}", value, retain=True)
 
 def connect_mqtt():
-    client = mqtt.Client(protocol=mqtt.MQTTv311)
+    client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=CallbackAPIVersion.V4)
     if MQTT_USERNAME:
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
     client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
@@ -121,8 +122,8 @@ def run_once():
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
         publish_values(client, summary)
         if "image_url" in summary:
-            publish_camera_discovery(client)
-            publish_camera_image(client, image_url)            
+            publish_camera_discovery(client, summary["image_url"])
+            publish_camera_image(client, summary["image_url"])            
         client.loop_stop()
         client.disconnect()
 

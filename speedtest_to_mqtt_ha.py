@@ -55,7 +55,7 @@ def publish_discovery(client, sensor_id, name, unit, icon, value_template):
     payload = {
         "name": f"Speedtest {name}",
         "object_id": object_id,
-        "state_topic": f"{SENSOR_PREFIX}/{s§ensor_id}",
+        "state_topic": f"{SENSOR_PREFIX}/{sensor_id}",
         "unit_of_measurement": unit,
         "value_template": value_template,
         "unique_id": unique_id,

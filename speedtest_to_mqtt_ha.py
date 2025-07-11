@@ -49,13 +49,13 @@ def extract_summary(data):
     }
 
 def publish_discovery(client, sensor_id, name, unit, icon, value_template):
-    object_id = f"speedtest_{sensor_id}"
+    object_id = f"{DEVICE_NAME}_{sensor_id}"
     unique_id = f"{DEVICE_NAME}_{sensor_id}"
     topic = f"{DISCOVERY_PREFIX}/sensor/{DEVICE_NAME}/{sensor_id}/config"
     payload = {
         "name": f"Speedtest {name}",
         "object_id": object_id,
-        "state_topic": f"{SENSOR_PREFIX}/{sensor_id}",
+        "state_topic": f"{SENSOR_PREFIX}/{s§ensor_id}",
         "unit_of_measurement": unit,
         "value_template": value_template,
         "unique_id": unique_id,
@@ -85,6 +85,7 @@ def run_once():
     result = run_speedtest()
     if result:
         summary = extract_summary(result)
+        print(summary)
         client = connect_mqtt()
         client.loop_start()
         publish_discovery(client, "ping_ms", "Ping", "ms", "mdi:speedometer", "{{ value }}")

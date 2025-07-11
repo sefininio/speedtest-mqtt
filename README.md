@@ -44,6 +44,9 @@ MQTT_USERNAME
 > The MQTT password  (optional)  
 MQTT_PASSWORD       
 
+> every 3 hours by default  
+CRON_SCHEDULE="0 */3 * * *"    
+
 ### Entity naming and discovery
 
 > MQTT discovery topic prefix  

@@ -5,6 +5,7 @@ import paho.mqtt.client as mqtt
 import os
 import time
 import requests
+import base64
 from paho.mqtt.client import CallbackAPIVersion
 
 # Config from environment (with defaults)
@@ -72,7 +73,7 @@ def publish_discovery(client, sensor_id, name, unit, icon, value_template):
     }
     client.publish(topic, json.dumps(payload), retain=True)
 
-def publish_camera_discovery(client, image_url):
+def publish_camera_discovery(client):
     topic = f"{DISCOVERY_PREFIX}/camera/{DEVICE_NAME}/result/config"
     payload = {
         "name": "Speedtest Result Image",
@@ -83,8 +84,7 @@ def publish_camera_discovery(client, image_url):
             "name": DEVICE_NAME.replace("_", " ").title(),
             "manufacturer": DEVICE_MANUFACTURER,
             "model": DEVICE_MODEL
-        },
-        "image_url": image_url
+        }
     }
     client.publish(topic, json.dumps(payload), retain=True)
 
@@ -123,7 +123,7 @@ def run_once():
         publish_discovery(client, "packet_loss", "Packet Loss", "%", "mdi:percent", "{{ value }}")
         publish_values(client, summary)
         if "image_url" in summary:
-            publish_camera_discovery(client, summary["image_url"])
+            publish_camera_discovery(client)
             publish_camera_image(client, summary["image_url"])            
         client.loop_stop()
         client.disconnect()

@@ -24,6 +24,7 @@ def bytes_to_mbps(bytes_per_sec):
     return round((bytes_per_sec * 8) / 1_000_000, 2)
 
 def run_speedtest():
+    print(f"Running speedtest...")
     try:
         result = subprocess.run(["speedtest", "--format=json"], capture_output=True, text=True, check=True)
         return json.loads(result.stdout)
@@ -151,4 +152,14 @@ def run_once():
         client.disconnect()
 
 if __name__ == "__main__":
-    run_once()
+    test_mode = os.getenv("TEST_MODE", "0") == "1"
+    interval = int(os.getenv("SAMPLE_INTERVAL_SECONDS", "10800"))
+
+    if test_mode:
+        print("🧪 Running in test mode (once)...")
+        run_once()
+    else:
+        print(f"🔁 Running in loop mode every {interval} seconds...")
+        while True:
+            run_once()
+            time.sleep(interval)

@@ -129,7 +129,6 @@ def printEnvVars():
     print(f"TZ: {os.getenv('TZ')}")    
 
 def run_once():
-    printEnvVars()
     result = run_speedtest()
     if result:
         summary = extract_summary(result)
@@ -154,6 +153,7 @@ def run_once():
 if __name__ == "__main__":
     test_mode = os.getenv("TEST_MODE", "0") == "1"
     interval = int(os.getenv("SAMPLE_INTERVAL_SECONDS", "10800"))
+    printEnvVars()
 
     if test_mode:
         print("🧪 Running in test mode (once)...")

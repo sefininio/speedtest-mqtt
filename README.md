@@ -1,6 +1,7 @@
 # speedtest-mqtt
 
 A service that wraps a python script for running Ookla Speedtest CLI and report results to MQTT with Home Assistant auto discovery.  
+SAMPLE_INTERVAL_SECONDS determines the frequency of the sample.
 
 A Home Assistant device will be created with the following sensors:
 * Ping (ms)  

@@ -6,6 +6,7 @@ import os
 import time
 import requests
 from paho.mqtt.client import CallbackAPIVersion
+from datetime import datetime
 
 # Config from environment (with defaults)
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")

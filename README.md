@@ -47,7 +47,7 @@ MQTT_USERNAME
 MQTT_PASSWORD       
 
 > every 3 hours by default  
-CRON_SCHEDULE=0 */3 * * *  
+SAMPLE_INTERVAL_SECONDS=10800
 
 ### Entity naming and discovery
 

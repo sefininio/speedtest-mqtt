@@ -22,4 +22,4 @@ COPY crontab.txt /app/crontab.txt
 
 WORKDIR /app
 
-ENTRYPOINT ["python3", "/app/speedtest_to_mqtt_ha.py"]
+ENTRYPOINT ["python3", "-u", "/app/speedtest_to_mqtt_ha.py"]

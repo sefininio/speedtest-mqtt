@@ -115,7 +115,20 @@ def connect_mqtt():
     client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
     return client
 
+def printEnvVars():
+    print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
+    print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
+    print(f"MQTT_USERNAME: {MQTT_USERNAME}")
+    print(f"MQTT_PASSWORD: {MQTT_PASSWORD}")
+    print(f"DISCOVERY_PREFIX: {DISCOVERY_PREFIX}")
+    print(f"SENSOR_PREFIX: {SENSOR_PREFIX}")
+    print(f"DEVICE_MANUFACTURER: {DEVICE_MANUFACTURER}")
+    print(f"DEVICE_MODEL: {DEVICE_MODEL}")
+    print(f"DEVICE_NAME: {DEVICE_NAME}")
+    print(f"TZ: {os.getenv('TZ')}")    
+
 def run_once():
+    printEnvVars()
     result = run_speedtest()
     if result:
         summary = extract_summary(result)

@@ -42,7 +42,7 @@ def extract_summary(data):
 
     # Convert to local system time (respects TZ env variable)
     local_time = utc_time.astimezone()  # ← no arguments = use system local time
-    local_time_str = local_time.isoformat()
+    local_time_str = local_time.strftime("%d/%m/%Y %H:%M:%S")
 
     return {
         "ping_ms": round(data["ping"]["latency"], 2),

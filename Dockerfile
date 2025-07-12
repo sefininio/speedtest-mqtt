@@ -19,9 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app files
 COPY speedtest_to_mqtt_ha.py /app/speedtest_to_mqtt_ha.py
 COPY crontab.txt /app/crontab.txt
-COPY entrypoint.sh /app/entrypoint.sh
 
-RUN chmod +x /app/entrypoint.sh
 WORKDIR /app
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["python3", "/app/speedtest_to_mqtt_ha.py"]

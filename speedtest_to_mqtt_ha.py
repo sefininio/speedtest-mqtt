@@ -36,6 +36,13 @@ def run_speedtest():
         return None
 
 def extract_summary(data):
+    # Parse the UTC ISO timestamp from Speedtest
+    utc_time = datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
+
+    # Convert to local system time (respects TZ env variable)
+    local_time = utc_time.astimezone()  # ← no arguments = use system local time
+    local_time_str = local_time.isoformat()
+
     return {
         "ping_ms": round(data["ping"]["latency"], 2),
         "jitter_ms": round(data["ping"]["jitter"], 2),
@@ -47,7 +54,7 @@ def extract_summary(data):
         "server": data["server"]["name"],
         "result_url": data["result"]["url"],
         "image_url": data["result"]["url"] + ".png",
-        "timestamp": data["timestamp"],
+        "timestamp": local_time_str  # ISO string in system timezone
     }
 
 def publish_discovery(client, sensor_id, name, unit, icon, value_template):

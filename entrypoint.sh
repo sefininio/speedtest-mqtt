@@ -17,7 +17,7 @@ else
     {
         echo "SHELL=/bin/sh"
         echo "PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
-        echo "$CRON_SCHEDULE . /env-vars.sh"
+        echo "$CRON_SCHEDULE sh /env-vars.sh"
     } > /etc/cron.d/speedtest
 
     chmod 0644 /etc/cron.d/speedtest

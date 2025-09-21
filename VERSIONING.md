@@ -20,10 +20,10 @@ git commit -m "Release v1.2.3"
 git push
 
 # Tag the current commit with a new version
-git tag v1.2.3
+git tag -a v1.2.3 -m "support versioning"
 
 # Push the tag
-git push origin v1.2.3
+git push --tags
 
 # Run the build script (automatically gets tag and builds container)
 ./build.sh

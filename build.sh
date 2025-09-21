@@ -5,6 +5,11 @@
 
 set -e
 
+# Default registry and image name
+REGISTRY=${REGISTRY:-"ghcr.io/sefininio"}
+IMAGE_NAME=${IMAGE_NAME:-"speedtest-mqtt"}
+FULL_IMAGE_NAME="$REGISTRY/$IMAGE_NAME"
+
 echo "🏷️  Getting latest git tag..."
 
 # Get the latest git tag
@@ -17,10 +22,14 @@ echo "$VERSION" > VERSION
 
 echo "🐳 Building Docker container..."
 
-# Build the container
-docker build -t speedtest-mqtt:$VERSION -t speedtest-mqtt:latest .
+# Build the container with registry tags
+docker build -t $FULL_IMAGE_NAME:$VERSION -t $FULL_IMAGE_NAME:latest .
 
 echo "✅ Build complete!"
-echo "   Image: speedtest-mqtt:$VERSION"
-echo "   Image: speedtest-mqtt:latest"
+echo "   Image: $FULL_IMAGE_NAME:$VERSION"
+echo "   Image: $FULL_IMAGE_NAME:latest"
 echo "   Version file: $(cat VERSION)"
+echo ""
+echo "🚀 To push to registry:"
+echo "   docker push $FULL_IMAGE_NAME:$VERSION"
+echo "   docker push $FULL_IMAGE_NAME:latest"

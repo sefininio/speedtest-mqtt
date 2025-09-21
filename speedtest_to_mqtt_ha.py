@@ -9,6 +9,14 @@ import threading
 from paho.mqtt.client import CallbackAPIVersion
 from datetime import datetime
 
+def get_version():
+    """Get version from VERSION file created during Docker build"""
+    try:
+        with open('/app/VERSION', 'r') as f:
+            return f.read().strip()
+    except:
+        return 'unknown'
+
 # Config from environment (with defaults)
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
 MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", "1883"))
@@ -222,6 +230,10 @@ def run_interval_timer(interval):
         run_speedtest_and_publish()
 
 if __name__ == "__main__":
+    # Print version on startup
+    version = get_version()
+    print(f"🚀 Speedtest MQTT HA - Version: {version}")
+    
     test_mode = os.getenv("TEST_MODE", "0") == "1"
     interval = int(os.getenv("SAMPLE_INTERVAL_SECONDS", "10800"))
     printEnvVars()

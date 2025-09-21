@@ -19,6 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app files
 COPY speedtest_to_mqtt_ha.py /app/speedtest_to_mqtt_ha.py
 COPY crontab.txt /app/crontab.txt
+COPY VERSION /app/VERSION
 
 WORKDIR /app
 

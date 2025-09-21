@@ -3,6 +3,12 @@
 A service that wraps a python script for running Ookla Speedtest CLI and report results to MQTT with Home Assistant auto discovery.  
 SAMPLE_INTERVAL_SECONDS determines the frequency of the sample.
 
+## Features
+- **Scheduled speedtests**: Run speedtests at regular intervals
+- **On-demand speedtests**: Trigger speedtests manually via MQTT commands
+- **Home Assistant integration**: Automatic device and sensor discovery
+- **Thread-safe**: Multiple speedtest requests are handled safely with rate limiting
+
 A Home Assistant device will be created with the following sensors:
 * Ping (ms)  
 * Jitter(ms)  
@@ -33,6 +39,23 @@ services:
 ```
 
 
+# Manual Speedtest Commands
+
+You can trigger speedtests manually by publishing MQTT messages to the command topic (default: `home/internet/speedtest/run`).
+
+Supported commands:
+- `run`
+- `start` 
+- `execute`
+- `go`
+
+Example using mosquitto client:
+```bash
+mosquitto_pub -h your-mqtt-broker -t "home/internet/speedtest/run" -m "run"
+```
+
+**Rate limiting**: Manual speedtests are rate-limited to prevent running more than once every 30 seconds.
+
 # .env file:
 ### MQTT connection  
 > The MQTT host IP  
@@ -57,6 +80,9 @@ DISCOVERY_PREFIX=homeassistant
 
 > HA sensor name prefix  
 SENSOR_PREFIX=home/internet/speedtest  
+
+> MQTT topic to listen for manual speedtest commands  
+COMMAND_TOPIC=home/internet/speedtest/run
 
 > HA Device name. Add postfix for the server name, this will allow multiple instances running speedtest and reporting to the same mqtt+ha instance  
 > For example `speedtest_nas` will create a `Speedtest Nas` Device.

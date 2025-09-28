@@ -23,7 +23,8 @@ echo "$VERSION" > VERSION
 echo "🐳 Building Docker container..."
 
 # Build the container with registry tags
-docker build -t $FULL_IMAGE_NAME:$VERSION -t $FULL_IMAGE_NAME:latest .
+docker build -t $FULL_IMAGE_NAME:$VERSION .
+docker build -t $FULL_IMAGE_NAME:latest .
 
 echo "✅ Build complete!"
 echo "   Image: $FULL_IMAGE_NAME:$VERSION"
